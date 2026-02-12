@@ -3,6 +3,12 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
+import numpy as np
+
+from sklearn import tree
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn import metrics
+
 data = pd.read_csv('cleaned_data.csv')
 
 # data.price.replace(('vhigh','high','med','low'), (4,3,2,1), inplace = True)
@@ -39,7 +45,23 @@ plt.legend(loc = 'best', title='Memory Card Max Size (GB)', bbox_to_anchor=(1.05
 
 
 memory_card_type = data['memory_card_type'].value_counts()
+
+#Hacer lo mismo con todas las columnas para crear un arbol de decisiones
 memory_card_type.replace(('Dedicated', 'Hybrid'),(0,1), inplace=True)
+# data.head()
+dataset = data.values
+x= dataset[:, :-1]
+y= np.array(dataset[:, -1], dtype=int)
+X_Train, X_Test, Y_Train, Y_Test = train_test_split(x,y, test_size=0.2, random_state=0)
+tree = tree.DecisionTreeClassifier(max_depth=10)
+tree.fit(X_Train, Y_Train)
+
+y_pred = tree.predict(X_Test)
+
+print(y_pred)
+score = tree.score(X_Test, Y_Test)
+print('Accuracy: %0.4f' % score)
+
 
 
 texts=[
